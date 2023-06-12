@@ -1,0 +1,45 @@
+body{
+  font:20px;
+  background:#F7FF9E;
+  margin: 30px;
+  font-family: "Adelphe", serif;
+}
+
+.col-wrapper{
+	display: flex; 
+	flex-wrap: wrap;
+	width: 100%;
+	/*justify-content: space-between;*/
+}
+
+.col{
+	width: 33.333%;
+	opacity: 0.5;
+}
+
+.col.started{
+	opacity: 1;
+}
+
+textarea{
+	width: 100%;
+	min-height: 100vh;
+	font-size: 40px;
+	border: none; 
+	background:transparent;
+	outline: none;
+	padding: 10px;
+	resize: none;
+}
+
+.config{
+	min-height: 40px;
+	/*border-left: 2px solid grey;*/
+	/*border-right: 2px solid grey;*/
+	font-size: 20px;
+	text-align: center;
+}
+
+.editor{
+	/*border-top: 2px solid grey;*/
+}
