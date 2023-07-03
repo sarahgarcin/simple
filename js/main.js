@@ -4,6 +4,7 @@ let b = d.body;
 // const config = document.getElementById('config');
 const editors = document.querySelectorAll('.editor');
 const configs = document.querySelectorAll('.config');
+let nbOfCol = 3; 
 
 //  init interval
 // let interval = [];
@@ -18,6 +19,17 @@ init();
 
 async function init(){
   return new Promise((resolve) => {
+    document.body.addEventListener('keydown', handleKeyDown);
+
+    // On click + button, add column
+    const button = document.getElementById('add-col-btn');
+    button.addEventListener('click', event => {
+      nbOfCol +=1; 
+      let newColId = "col-" + nbOfCol;
+      console.log(nbOfCol, newColId);
+      addColumn(newColId);
+    });
+
     document.body.addEventListener('keydown', handleKeyDown);
     // for (let editor of editors){
     //   editor.addEventListener('keydown', handleKeyDownEditor);
@@ -65,6 +77,21 @@ function handleKeyDown(e){
   }
 }
 
+function addColumn(editorId){
+  let wrapper = document.querySelector('.col-wrapper');
+  let col = document.createElement('div');
+  col.classList.add('col');
+  col.setAttribute('id', editorId);
+  let config = document.createElement('textarea');
+  config.classList.add('config');
+  config.innerHTML = '1500 1';
+  let editor = document.createElement('textarea');
+  editor.classList.add('editor');
+  col.appendChild(config);
+  col.appendChild(editor);
+  wrapper.appendChild(col);
+}
+
 function getDataFromEditors(editorId){
   // get editors 
   let targetEditor = document.querySelector("#" + editorId + " .editor");
@@ -93,7 +120,7 @@ function createLoop(editorId){
   let data =  getDataFromEditors(editorId);
   loops.push({
     id: data.id,
-    loop: new myLoop(0, data.words, data.interval, data.gain), 
+    loop: new myLoop(0, data.words, data.interval, data.gain, data.id), 
     started : true
   });
 }
@@ -133,22 +160,24 @@ function parseEditor(editorToParse){
   textToParse = textToParse.replaceAll(';','');
   textToParse = textToParse.replaceAll('\n',' ');
   // remove "." only on the main editor not on the config editor
-  if(editorToParse.classList.contains('editor')){
-    textToParse = textToParse.replaceAll('.','');
-  }
+  // if(editorToParse.classList.contains('editor')){
+  //   textToParse = textToParse.replaceAll('.','');
+  // }
   const words = textToParse.split(" ");
   console.log(words);
   return words;
 }
 
 
-function myLoop(i, el, tempo, gain) {         //  create a loop function
+function myLoop(i, el, tempo, gain, id) {         //  create a loop function
   let timeout;
   let that = this;
   this.interval = tempo;
   this.gain = gain; 
   this.i = i; 
   this.el = el; 
+  this.id = id;
+  this.playback = 1;
   this.start = function() {
     timeout = setTimeout(step, this.interval);
     console.log("start", timeout);
@@ -176,17 +205,60 @@ function myLoop(i, el, tempo, gain) {         //  create a loop function
     console.log("stop");
   }
   function step(){
-    console.log("step", that.i, that.interval, that.el[that.i]);
-    
+    console.log("step", that.i, that.interval, that.el[that.i], that.gain);
+    let targetConfig = document.querySelector("#" + that.id + " .config");
     // get random default sample for the word that doesn't exist in the dictionnary
     randomDefaultSample = getRandomInt(0, defaultSamples.length);
     samples['default'] = "default/" + defaultSamples[randomDefaultSample];
-    
+
     if(samples[that.el[that.i]] != undefined){
-      playSample(samples[that.el[that.i]], that.gain);
+      playSample(samples[that.el[that.i]], that.gain, that.playback);
+      // reset the normal values for others
+      that.interval = parseEditor(targetConfig)[0];
+      that.gain = parseEditor(targetConfig)[1];
+      that.playback = 1;
+    }
+    // add options with punctuation -> options are apply to the word after
+    // if '.' change pitch playback divide by 2 --> audio.playbackRate
+    else if(that.el[that.i] == '.'){
+      that.playback = 0.5;
+    }
+    // if ':' change pitch playback to 0.3 --> audio.playbackRate
+    else if(that.el[that.i] == ':'){
+      that.playback = 0.3;
+    }
+    // if '+' change pitch playback to 2
+    else if(that.el[that.i] == '+'){
+      that.playback = 2;
+    }
+    // if '-' change interval divide by 2
+    else if(that.el[that.i] == '-'){
+      that.interval = parseEditor(targetConfig)[0] / 2;
+    }
+    // if '_' change interval divide by 4
+    else if(that.el[that.i] == '—'){
+      that.interval = parseEditor(targetConfig)[0] / 4;
+    }
+    // if '/' change the gain divide by 2
+    else if(that.el[that.i] == '/'){
+      that.gain = parseEditor(targetConfig)[1] / 2;
+    }
+    // if '*' change the gain mutilply by 2
+    else if(that.el[that.i] == '*'){
+      if(that.gain * 2 < 1){
+        that.gain = parseEditor(targetConfig)[1] * 2;
+      }
+      else{
+        that.gain = 1;
+      }
+      
     }
     else{
-      playSample(samples['default'], that.gain);  
+      playSample(samples['default'], that.gain, that.playback); 
+      // reset the normal values for others
+      that.interval = parseEditor(targetConfig)[0];
+      that.gain = parseEditor(targetConfig)[1];
+      that.playback = 1;
     }
 
     that.i++;                    //  increment the counter
@@ -201,11 +273,12 @@ function myLoop(i, el, tempo, gain) {         //  create a loop function
   }
 }
 
-function playSample(sample, gain){
+function playSample(sample, gain, playback){
     const URL = 'samples/'+ sample;
     console.log('path: ' + URL, 'gain: ' + gain);
     let audio = new Audio(URL);
     audio.volume = gain;
+    audio.playbackRate = playback;
     // audio.cloneNode(true).play();
     audio.play();
 }

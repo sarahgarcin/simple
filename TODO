@@ -1,5 +1,8 @@
 # TO DO 
 
+[x] Ajouter des colonnes (avoir un +)
+[x] Utiliser la ponctuation comme paramètres du mot d'avant => tiret = 1/2 du temps principal / tiret quadratin = 1/4 
+[] ajouter des highlights pour chaque mot 
 [] Améliorer la fonction getDataFromEditors() -> faire une promise
 		--> getDataFromEditors --> createLoop puis Start (si loop n'exsite pas)
 [] clean code = enlever tous les commentaires inutiles

@@ -15,6 +15,7 @@ body{
 .col{
 	width: 33.333%;
 	opacity: 0.5;
+	height: 50vh
 }
 
 .col.started{
@@ -23,7 +24,7 @@ body{
 
 textarea{
 	width: 100%;
-	min-height: 100vh;
+	min-height: 40vh;
 	font-size: 40px;
 	border: none; 
 	background:transparent;
@@ -43,3 +44,18 @@ textarea{
 .editor{
 	/*border-top: 2px solid grey;*/
 }
+
+#add-col-btn{
+	position: fixed; 
+	top: 10px; 
+	right: 30px;
+	cursor: pointer;
+	font-size: 20px; 
+	background: white; 
+	padding: 10px 15px 5px;
+	line-height: 1;
+}
+
+
+
+
