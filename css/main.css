@@ -56,6 +56,42 @@ textarea{
 	line-height: 1;
 }
 
+footer{
+	width: 100%;
+	position: fixed; 
+	bottom: 0;
+	left: 0;
+	background: #FFF;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	padding: 5px 20px;
+}
+
+footer button{
+	font-size: 30px;
+	cursor: pointer; 
+	color: red;
+	line-height: 0.8;
+}
+
+#live-recording{
+	display: flex;
+}
+
+#new-word{
+	width: 150px;
+}
+#words-added{
+	display: flex; 
+	word-wrap: wrap;
+
+}
+
+#words-added li{
+	padding: 5px;
+}
+
 
 
 

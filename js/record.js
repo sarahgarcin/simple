@@ -1,5 +1,7 @@
 var recorder, gumStream;
+const newWordField = document.getElementById("new-word");
 var recordButton = document.getElementById("recordButton");
+const addedWords = document.getElementById("words-added");
 recordButton.addEventListener("click", toggleRecording);
 
 function toggleRecording() {
@@ -17,9 +19,17 @@ function toggleRecording() {
                 var preview = document.createElement('audio');
                 preview.controls = true;
                 preview.src = url;
-                document.body.appendChild(preview);
+                // document.body.appendChild(preview);
+                // get new word and add the sound to samples
+                let newWord = newWordField.value;
+                let wordLi = document.createElement('li');
+                wordLi.innerHTML = newWord;
+                addedWords.appendChild(wordLi);
+                samples[newWord] = url;
+                recordButton.innerHTML = "●";
             };
             recorder.start();
+            recordButton.innerHTML = "■";
         });
     }
 }

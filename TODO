@@ -2,6 +2,7 @@
 
 [x] Ajouter des colonnes (avoir un +)
 [x] Utiliser la ponctuation comme paramètres du mot d'avant => tiret = 1/2 du temps principal / tiret quadratin = 1/4 
+[] Documenter 
 [] ajouter des highlights pour chaque mot 
 [] Améliorer la fonction getDataFromEditors() -> faire une promise
 		--> getDataFromEditors --> createLoop puis Start (si loop n'exsite pas)
@@ -12,8 +13,8 @@
 [] Design 
 [] Ajouter une fonctionnalité pour faire des boucles en live (enregistrements live)
 [] Bug : ne pas pouvoir faire CRTL + S au début 
-// [] Ajouter la possibilité de mettre plusieurs lignes pour avoir des jeux superposés
-[] Ajouter des options lesquels ?
+// [x] Ajouter la possibilité de mettre plusieurs lignes pour avoir des jeux superposés
+[x] Ajouter des options lesquels ?
 [] ?? Tout passer en web audio => play mp3 files in web audio 
 [x] Ajouter le gain à la config
 [x] Ajouter un raccourci pour stop

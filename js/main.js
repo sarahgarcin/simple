@@ -274,8 +274,16 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
 }
 
 function playSample(sample, gain, playback){
-    const URL = 'samples/'+ sample;
-    console.log('path: ' + URL, 'gain: ' + gain);
+    let detectFile = sample.split('.')[1];
+    let URL;
+    // detect if the file to play is an mp3 or a blob: (from live recording)
+    if(detectFile == "mp3" || detectFile == "ogg"){
+      URL = 'samples/'+ sample;
+    }
+    else{
+      URL = sample;
+    }
+    console.log('path: ' + URL, 'gain: ' + gain, 'playbak: ' + playback);
     let audio = new Audio(URL);
     audio.volume = gain;
     audio.playbackRate = playback;
