@@ -30,7 +30,7 @@ async function init(){
       addColumn(newColId);
     });
 
-    document.body.addEventListener('keydown', handleKeyDown);
+    // document.body.addEventListener('keydown', handleKeyDown);
     // for (let editor of editors){
     //   editor.addEventListener('keydown', handleKeyDownEditor);
     // }
@@ -83,9 +83,11 @@ function addColumn(editorId){
   col.classList.add('col');
   col.setAttribute('id', editorId);
   let config = document.createElement('textarea');
+  config.setAttribute('spellcheck', 'false');
   config.classList.add('config');
   config.innerHTML = '1500 1';
   let editor = document.createElement('textarea');
+  editor.setAttribute('spellcheck', 'false');
   editor.classList.add('editor');
   col.appendChild(config);
   col.appendChild(editor);
@@ -231,11 +233,15 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
     else if(that.el[that.i] == '+'){
       that.playback = 2;
     }
+    // if '!' change pitch playback to 3
+    else if(that.el[that.i] == '!'){
+      that.playback = 3;
+    }
     // if '-' change interval divide by 2
     else if(that.el[that.i] == '-'){
       that.interval = parseEditor(targetConfig)[0] / 2;
     }
-    // if '_' change interval divide by 4
+    // if '—' change interval divide by 4
     else if(that.el[that.i] == '—'){
       that.interval = parseEditor(targetConfig)[0] / 4;
     }
@@ -243,7 +249,7 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
     else if(that.el[that.i] == '/'){
       that.gain = parseEditor(targetConfig)[1] / 2;
     }
-    // if '*' change the gain mutilply by 2
+    // if '*' change the gain mutiply by 2
     else if(that.el[that.i] == '*'){
       if(that.gain * 2 < 1){
         that.gain = parseEditor(targetConfig)[1] * 2;

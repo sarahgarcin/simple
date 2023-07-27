@@ -19,6 +19,7 @@ let samples = {
   "un" : "drum-4/drum_15.mp3",
 
   // nouns
+  "alcool" : "animals/oiseau-sifflement.mp3",
   "bisous" : "drum-4/drum_7.mp3",
   "bonjour" : "voices/bording-complete.mp3",
   "chelou": "drum-4/drum_4.mp3",
@@ -26,7 +27,10 @@ let samples = {
   "direct": "music/dont-touch-me-tomato.mp3",
   "éditeur": "drum-4/drum_2.mp3",
   "ligne" : "drum-4/drum_13.mp3",
+  "matin" : "animals/poule.mp3",
   "merci" : "voices/poules-deau.mp3",
+  "psg"   : "animals/oiseau-weird.mp3",
+  "radio" : "animals/canard.mp3",
   "texte" : "drum-4/drum_10.mp3",
   "youpi" : "music/personal-jesus.mp3",
 
@@ -46,6 +50,7 @@ let samples = {
 
   // verbs
   "basé": "drum-4/drum_5.mp3",
+  "boire": "animals/oiseau-roulant.mp3",
   "est" : "drum-4/drum_1.mp3",
   "sommes" : "music/patriarcat.mp3",
   "terminé" : "drum-4/drum_15.mp3",
