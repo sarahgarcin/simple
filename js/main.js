@@ -1,17 +1,10 @@
 let d = document;
 let b = d.body;
-// const editor = document.getElementById('editor');
-// const config = document.getElementById('config');
-const editors = document.querySelectorAll('.editor');
-const configs = document.querySelectorAll('.config');
-let nbOfCol = 3; 
+let nbOfCol = settings.numberOfColumns; 
 
-//  init interval
-// let interval = [];
-// init loop
+// init loops
 let loops = []; 
-// bool if started or not 
-// let started = false;
+
 
 
 // launch ini fuction
@@ -19,6 +12,13 @@ init();
 
 async function init(){
   return new Promise((resolve) => {
+    
+    // init columns (depending on the number define in settings.js) 
+    for(let i=1; i<=nbOfCol; i++){
+      let colId = "col-" + i;
+      addColumn(colId);
+    }
+
     document.body.addEventListener('keydown', handleKeyDown);
 
     // On click + button, add column
@@ -30,13 +30,6 @@ async function init(){
       addColumn(newColId);
     });
 
-    // document.body.addEventListener('keydown', handleKeyDown);
-    // for (let editor of editors){
-    //   editor.addEventListener('keydown', handleKeyDownEditor);
-    // }
-    // for (let config of configs){
-    //   config.addEventListener('keydown', handleKeyDownConfig);
-    // }
     console.log('Welcome to simple');
     resolve('init-done');
   })
@@ -46,6 +39,7 @@ function handleKeyDown(e){
   let target = e.target;
   let targetParentId = target.parentNode.id; 
   let thisLoop = searchKeyVal(loops, 'id', targetParentId);
+  
   if (e.ctrlKey && e.key == 's') { 
     console.log("Save Editor Keypressed");
     e.preventDefault();
@@ -72,8 +66,7 @@ function handleKeyDown(e){
       console.log("Start / Stop", "started: false");
       createLoop(targetParentId);
       start(targetParentId);
-    }
-    
+    }  
   }
 }
 
@@ -85,7 +78,7 @@ function addColumn(editorId){
   let config = document.createElement('textarea');
   config.setAttribute('spellcheck', 'false');
   config.classList.add('config');
-  config.innerHTML = '1500 1';
+  config.innerHTML = settings.tempoBase + " " + settings.gainBase;
   let editor = document.createElement('textarea');
   editor.setAttribute('spellcheck', 'false');
   editor.classList.add('editor');
@@ -158,8 +151,8 @@ function saveEditor(editorId){
 function parseEditor(editorToParse){
   console.log("Parse Editor Function")
   let textToParse = editorToParse.value;
-  textToParse = textToParse.replaceAll(',','');
-  textToParse = textToParse.replaceAll(';','');
+  // textToParse = textToParse.replaceAll(',','');
+  // textToParse = textToParse.replaceAll(';','');
   textToParse = textToParse.replaceAll('\n',' ');
   // remove "." only on the main editor not on the config editor
   // if(editorToParse.classList.contains('editor')){
@@ -209,6 +202,14 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
   function step(){
     console.log("step", that.i, that.interval, that.el[that.i], that.gain);
     let targetConfig = document.querySelector("#" + that.id + " .config");
+    let thisinterval = that.interval;
+    let thisgain = that.gain;
+
+    // get all punctuations from settings.json
+    const playbackPunctuations = settings.punctuations.filter((punctuation) => punctuation.type === "playback");
+    const intervalPunctuations = settings.punctuations.filter((punctuation) => punctuation.type === "interval");
+    const gainPunctuations = settings.punctuations.filter((punctuation) => punctuation.type === "gain");
+    
     // get random default sample for the word that doesn't exist in the dictionnary
     randomDefaultSample = getRandomInt(0, defaultSamples.length);
     samples['default'] = "default/" + defaultSamples[randomDefaultSample];
@@ -216,61 +217,89 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
     if(samples[that.el[that.i]] != undefined){
       playSample(samples[that.el[that.i]], that.gain, that.playback);
       // reset the normal values for others
-      that.interval = parseEditor(targetConfig)[0];
-      that.gain = parseEditor(targetConfig)[1];
+      that.interval = thisinterval;
+      that.gain = thisgain;
       that.playback = 1;
     }
-    // add options with punctuation -> options are apply to the word after
-    // if '.' change pitch playback divide by 2 --> audio.playbackRate
-    else if(that.el[that.i] == '.'){
-      that.playback = 0.5;
-    }
-    // if ':' change pitch playback to 0.3 --> audio.playbackRate
-    else if(that.el[that.i] == ':'){
-      that.playback = 0.3;
-    }
-    // if '+' change pitch playback to 2
-    else if(that.el[that.i] == '+'){
-      that.playback = 2;
-    }
-    // if '!' change pitch playback to 3
-    else if(that.el[that.i] == '!'){
-      that.playback = 3;
-    }
-    // if '-' change interval divide by 2
-    else if(that.el[that.i] == '-'){
-      that.interval = parseEditor(targetConfig)[0] / 2;
-    }
-    // if '—' change interval divide by 4
-    else if(that.el[that.i] == '—'){
-      that.interval = parseEditor(targetConfig)[0] / 4;
-    }
-    // if '/' change the gain divide by 2
-    else if(that.el[that.i] == '/'){
-      that.gain = parseEditor(targetConfig)[1] / 2;
-    }
-    // if '*' change the gain mutiply by 2
-    else if(that.el[that.i] == '*'){
-      if(that.gain * 2 < 1){
-        that.gain = parseEditor(targetConfig)[1] * 2;
+    else {
+      const punctuationCharacters = settings.punctuations.map((punctuationObj) => punctuationObj.punctuation);
+      const currentPunctuation = that.el[that.i];
+      if (punctuationCharacters.includes(currentPunctuation)) {
+        // found playback punctuations
+        const foundPlaybackPunctuation = playbackPunctuations.find((puncObj) => puncObj.punctuation === currentPunctuation);
+        // found interval punctuations
+        const foundIntervalPunctuation = intervalPunctuations.find((puncObj) => puncObj.punctuation === currentPunctuation);
+        // found gain punctuations
+        const foundGainPunctuation = intervalPunctuations.find((puncObj) => puncObj.punctuation === currentPunctuation);
+        if (foundPlaybackPunctuation) {
+          that.playback = foundPlaybackPunctuation.value;
+        }
+        if (foundIntervalPunctuation) {
+          that.interval = eval(parseEditor(targetConfig)[0] + foundIntervalPunctuation.value);
+        }
+        if (foundGainPunctuation) {
+          that.gain = eval(parseEditor(targetConfig)[1] +foundGainPunctuation.value);
+        }
       }
       else{
-        that.gain = 1;
+        playSample(samples['default'], that.gain, that.playback); 
+        // reset the normal values for others
+        that.interval = thisinterval;
+        that.gain = thisgain;
+        that.playback = 1;
       }
-      
-    }
-    else{
-      playSample(samples['default'], that.gain, that.playback); 
-      // reset the normal values for others
-      that.interval = parseEditor(targetConfig)[0];
-      that.gain = parseEditor(targetConfig)[1];
-      that.playback = 1;
     }
 
-    that.i++;                    //  increment the counter
-    if (that.i < that.el.length) {           //  if the counter < 10, call the loop function
-      timeout = setTimeout(step, that.interval);             //  ..  again which will trigger another 
-    }                       //  ..  setTimeout()
+    // // add options with punctuation -> options are apply to the word after
+    // // if '.' change pitch playback divide by 2 --> audio.playbackRate
+    // else if(that.el[that.i] == '.'){
+    //   that.playback = 0.5;
+    // }
+    // // if ':' change pitch playback to 0.3 --> audio.playbackRate
+    // else if(that.el[that.i] == ':'){
+    //   that.playback = 0.3;
+    // }
+    // // if '+' change pitch playback to 2
+    // else if(that.el[that.i] == '+'){
+    //   that.playback = 2;
+    // }
+    // // if '!' change pitch playback to 3
+    // else if(that.el[that.i] == '!'){
+    //   that.playback = 3;
+    // }
+    // // if '-' change interval divide by 2
+    // else if(that.el[that.i] == '-'){
+    //   that.interval = parseEditor(targetConfig)[0] / 2;
+    // }
+    // // if '—' change interval divide by 4
+    // else if(that.el[that.i] == '—'){
+    //   that.interval = parseEditor(targetConfig)[0] / 4;
+    // }
+    // // if '/' change the gain divide by 2
+    // else if(that.el[that.i] == '/'){
+    //   that.gain = parseEditor(targetConfig)[1] / 2;
+    // }
+    // // if '*' change the gain mutiply by 2
+    // else if(that.el[that.i] == '*'){
+    //   if(that.gain * 2 < 1){
+    //     that.gain = parseEditor(targetConfig)[1] * 2;
+    //   }
+    //   else{
+    //     that.gain = 100;
+    //   }    
+    // }
+    // else{
+    //   playSample(samples['default'], that.gain, that.playback); 
+    //   // reset the normal values for others
+    //   that.interval = thisinterval;
+    //   that.gain = thisgain;
+    //   that.playback = 1;
+    // }
+
+    that.i++; //  increment the counter
+    if (that.i < that.el.length) { //  if the counter < 10, call the loop function
+      timeout = setTimeout(step, that.interval); //  ..  again which will trigger another 
+    }  //  ..  setTimeout()
     else{
       that.i = 0;
       clearTimeout(timeout);
@@ -280,21 +309,21 @@ function myLoop(i, el, tempo, gain, id) {         //  create a loop function
 }
 
 function playSample(sample, gain, playback){
-    let detectFile = sample.split('.')[1];
-    let URL;
-    // detect if the file to play is an mp3 or a blob: (from live recording)
-    if(detectFile == "mp3" || detectFile == "ogg"){
-      URL = 'samples/'+ sample;
-    }
-    else{
-      URL = sample;
-    }
-    console.log('path: ' + URL, 'gain: ' + gain, 'playbak: ' + playback);
-    let audio = new Audio(URL);
-    audio.volume = gain;
-    audio.playbackRate = playback;
-    // audio.cloneNode(true).play();
-    audio.play();
+  let detectFile = sample.split('.')[1];
+  let URL;
+  // detect if the file to play is an mp3 or a blob: (from live recording)
+  if(detectFile == "mp3" || detectFile == "ogg"){
+    URL = 'samples/'+ sample;
+  }
+  else{
+    URL = sample;
+  }
+  console.log('path: ' + URL, 'gain: ' + gain, 'playbak: ' + playback);
+  let audio = new Audio(URL);
+  // write the gain from 0 to 100 and divide it by 100 to remap it from 0 to 1
+  audio.volume = parseInt(gain) / 100;
+  audio.playbackRate = playback;
+  audio.play();
 }
 
 

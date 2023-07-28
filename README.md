@@ -10,6 +10,13 @@ CTRL + S pour save and update
 - Add samples in it
 - Configure the samples.js files to add your samples
 
+## Settings
+- Edit the file js/settings.js
+
+
+## Column config
+- The first parameter = tempo in milliseconds
+- The second parameter = gain (from 0 to 100)
 
 ## Punctuation Variables
 `.` change pitch playback divide by 2  

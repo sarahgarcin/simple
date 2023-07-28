@@ -1,13 +1,10 @@
 // DefaultSamples is a list of samples to use when a word doesn't exits
 let defaultSamples = ['drum_1.mp3', 'drum_2.mp3', 'drum_3.mp3', 'drum_4.mp3', 'drum_5.mp3', 'drum_6.mp3', 'drum_7.mp3', 'drum_8.mp3', 'drum_9.mp3', 'drum_10.mp3', 'drum_11.mp3', 'drum_12.mp3'];
-// It will play a random default sample among the list
-let randomDefaultSample = getRandomInt(0, defaultSamples.length);
 
 
 // samples is the dictionnary
 // Associate a word to a sample here 
-let samples = {
-  "default": "default/" + defaultSamples[randomDefaultSample], 
+const samples = {
   // ------------ french ------------ 
   // stop words 
   "de" : "drum-4/drum_14.mp3",
